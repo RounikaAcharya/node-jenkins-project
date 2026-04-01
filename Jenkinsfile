@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
-            steps {
-                git 'https://github.com/RounikaAcharya/node-jenkins-project'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t node-app .'
@@ -16,7 +10,9 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat 'docker run -d -p 3000:3000 node-app'
+                bat 'docker stop node-container || exit 0'
+                bat 'docker rm node-container || exit 0'
+                bat 'docker run -d -p 3000:3000 --name node-container node-app'
             }
         }
     }
